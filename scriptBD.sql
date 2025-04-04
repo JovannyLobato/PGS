@@ -17,3 +17,17 @@ CREATE TABLE IF NOT EXISTS registros (
     tipo ENUM('entrada', 'salida') NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+
+-- usuarios de ejemplos
+INSERT INTO usuarios (nombre, apellido, id_huella, fecha_nacimiento, rol)
+VALUES ('Lupita', 'Gómez', 'huella_001', '2015-06-12', 'niño');
+
+INSERT INTO usuarios (nombre, apellido, id_huella, fecha_nacimiento, rol)
+VALUES ('Carlos', 'Ramírez', 'huella_002', '2014-09-25', 'niño');
+
+INSERT INTO usuarios (nombre, apellido, id_huella, fecha_nacimiento, rol)
+VALUES ('Ana', 'Martínez', 'huella_003', '1990-02-10', 'administrador');
+
+select * from usuarios;
+select * registros;

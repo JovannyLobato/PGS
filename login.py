@@ -23,7 +23,7 @@ def verificar_usuario():
 # Interfaz gráfica
 ventana = tk.Tk()
 ventana.title("Login - Registro Huella")
-ventana.geometry("300x180")
+ventana.geometry("400x400")
 
 tk.Label(ventana, text="ID de Huella:").pack(pady=10)
 entry_id = tk.Entry(ventana)

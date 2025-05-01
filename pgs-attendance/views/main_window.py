@@ -15,7 +15,7 @@ class MainWindow(QWidget):
         self.setLayout(layout)
 
     def simular_huella(self):
-        # Simulamos una huella fija (hash o ID que usarías desde el escáner)
-        resultado = procesar_huella("abc123hash")
+        # Simulamos una huella fija (deberia de estar hashed)
+        resultado = procesar_huella("abc123")
         QMessageBox.information(self, "Resultado", resultado)
 

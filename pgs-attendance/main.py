@@ -1,8 +1,15 @@
-# app/main.py
-from fastapi import FastAPI
-from app.routes import router
-from app.database import Base, engine
+from PyQt5.QtWidgets import QApplication
+from views.main_window import MainWindow
+import sys
+from config.database import Base, engine
+from models.kid import Kid
+from models.registro import Registro
 
-app = FastAPI()
+# Crear tablas si no existen
 Base.metadata.create_all(bind=engine)
-app.include_router(router)
+
+app = QApplication(sys.argv)
+window = MainWindow()
+window.show()
+sys.exit(app.exec_())
+

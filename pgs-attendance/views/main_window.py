@@ -1,27 +1,3 @@
-""" 
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox
-from controllers.registro_controller import process_fingerprint
-
-class MainWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("PGS")
-        layout = QVBoxLayout()
-        
-        btn = QPushButton("Simular Huella")
-        btn.clicked.connect(self.simular_huella)
-        layout.addWidget(btn)
-        
-        self.setLayout(layout)
-
-    def simular_huella(self):
-        # Simulamos una huella fija (deberia de estar hashed)
-        resultado = process_fingerprint("abc123")
-        QMessageBox.information(self, "Resultado", resultado)
-"""
-
-
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox, QLineEdit, QLabel
 from controllers.registro_controller import procesar_huella

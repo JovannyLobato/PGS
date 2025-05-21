@@ -18,14 +18,19 @@ class MainWindow(QWidget):
         self.setLayout(self.layout)
 
     def usar_imagen_local(self):
-        ruta_imagen, _ = QFileDialog.getOpenFileName(self, "Selecciona una imagen", "", "Imágenes (*.jpg *.png, *.jpeg)")
-    
+        ruta_imagen, _ = QFileDialog.getOpenFileName(
+            self, "Selecciona una imagen", "", "Imágenes (*.jpg *.png *.jpeg)"
+        )
+
         if not ruta_imagen:
             return  # El usuario canceló
 
         try:
             resultado = comparar_con_kids(ruta_imagen)
-            QMessageBox.information(self, "Resultado", resultado)
+            if resultado:
+                QMessageBox.information(self, "Registro exitoso", f"¡Registro exitoso para el ID: {resultado}!")
+            else:
+                QMessageBox.warning(self, "No reconocido", "No se reconoció ningún rostro.")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo procesar la imagen:\n{str(e)}")
 

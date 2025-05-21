@@ -1,6 +1,5 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox, QLineEdit, QLabel
-from controllers.registro_controller import procesar_huella
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox, QLabel
+from controllers.registro_controller import comparar_con_kids
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -9,31 +8,21 @@ class MainWindow(QWidget):
 
         self.layout = QVBoxLayout()
 
-        self.label = QLabel("Ingresa la huella (texto):")
+        self.label = QLabel("Usa Face ID para registrar:")
         self.layout.addWidget(self.label)
 
-        self.input_field = QLineEdit()
-        self.layout.addWidget(self.input_field)
-
-        self.btn = QPushButton("Registrar entrada")
-        self.btn.clicked.connect(self.simular_huella)
-        self.layout.addWidget(self.btn)
+        self.btn_face = QPushButton("Usar imagen local para reconocimiento")
+        self.btn_face.clicked.connect(self.usar_imagen_local)
+        self.layout.addWidget(self.btn_face)
 
         self.setLayout(self.layout)
 
-    def simular_huella(self):
-        huella_texto = self.input_field.text()
-        if not huella_texto.strip():
-            QMessageBox.warning(self, "Advertencia", "Por favor ingresa un texto para la huella.")
-            return
-
-        resultado = procesar_huella(huella_texto)
-        QMessageBox.information(self, "Resultado", resultado)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    def usar_imagen_local(self):
+        ruta_imagen = "imagenes/yo1.jpg"          
+        try:
+            resultado = comparar_con_kids(ruta_imagen)
+            QMessageBox.information(self, "Resultado", resultado)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No se pudo procesar la imagen:\n{str(e)}")
 
 

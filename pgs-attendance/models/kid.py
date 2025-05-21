@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, LargeBinary
 from sqlalchemy.dialects.postgresql import BYTEA
 from config.database import Base
 
@@ -7,5 +7,4 @@ class Kid(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    fingerprint_hash = Column(BYTEA)  # cadena que representa la huella
-
+    face_encoding = Column(LargeBinary, nullable=True) 

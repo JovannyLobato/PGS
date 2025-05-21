@@ -1,39 +1,51 @@
 # controllers/registro_controller.py
 
 import face_recognition
-import pickle
-import numpy as np
+from sqlalchemy.orm import Session
+from models.registro import Registro
 from config.database import SessionLocal
 from models.kid import Kid
+import numpy as np
 
 def comparar_con_kids(image_path):
     try:
-        # Cargar y codificar imagen capturada
+        # Cargar imagen capturada y obtener su encoding
         imagen_capturada = face_recognition.load_image_file(image_path)
         codigos_captura = face_recognition.face_encodings(imagen_capturada)
 
         if not codigos_captura:
-            return "No se detectó ningún rostro en la imagen capturada."
+            return "No se detectó ningún rostro en la imagen."
 
         rostro_capturado = codigos_captura[0]
 
-        # Conectarse a la base de datos
-        session = SessionLocal()
-        kids = session.query(Kid).all()
+        db: Session = SessionLocal()
+        try:
+            kids = db.query(Kid).all()
 
-        for kid in kids:
-            if not kid.face_encoding:
-                continue
+            for kid in kids:
+                if not kid.face_encoding:
+                    continue
 
-            encoding_kid = pickle.loads(kid.face_encoding)
+                # Convertir el LargeBinary a numpy array
+                encoding_bd = np.frombuffer(kid.face_encoding, dtype=np.float64)
 
-            if face_recognition.compare_faces([encoding_kid], rostro_capturado)[0]:
-                session.close()
-                return f"✅ Rostro identificado: {kid.name}"
+                # Comparar rostros
+                resultados = face_recognition.compare_faces([encoding_bd], rostro_capturado)
 
-        session.close()
-        return "❌ Rostro no reconocido en la base de datos."
+                if resultados[0]:
+                    # Registrar la entrada
+                    nuevo_registro = Registro(kid_id=kid.id)
+                    db.add(nuevo_registro)
+                    db.commit()
+                    db.refresh(nuevo_registro)
+
+                    return f"Entrada registrada para {kid.name} (ID: {kid.id}) correctamente."
+
+            return "Rostro no reconocido en la base de datos."
+
+        finally:
+            db.close()
 
     except Exception as e:
-        return f"⚠️Error: {str(e)}"
+        return f"Error al procesar la imagen: {str(e)}"
 

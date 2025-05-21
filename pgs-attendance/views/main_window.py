@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox, QLabel, QFileDialog
 from controllers.registro_controller import comparar_con_kids
 
 class MainWindow(QWidget):
@@ -18,11 +18,14 @@ class MainWindow(QWidget):
         self.setLayout(self.layout)
 
     def usar_imagen_local(self):
-        ruta_imagen = "imagenes/yo1.jpg"          
+        ruta_imagen, _ = QFileDialog.getOpenFileName(self, "Selecciona una imagen", "", "Imágenes (*.jpg *.png, *.jpeg)")
+    
+        if not ruta_imagen:
+            return  # El usuario canceló
+
         try:
             resultado = comparar_con_kids(ruta_imagen)
             QMessageBox.information(self, "Resultado", resultado)
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo procesar la imagen:\n{str(e)}")
-
 

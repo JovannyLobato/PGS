@@ -1,11 +1,14 @@
 # controllers/registro_controller.py
 
 import face_recognition
-import cv2
-import os
+import pickle
+import numpy as np
+from config.database import SessionLocal
+from models.kid import Kid
 
-def comparar_con_kids(image_path, known_faces_dir='kids_faces'):
+def comparar_con_kids(image_path):
     try:
+        # Cargar y codificar imagen capturada
         imagen_capturada = face_recognition.load_image_file(image_path)
         codigos_captura = face_recognition.face_encodings(imagen_capturada)
 
@@ -14,19 +17,23 @@ def comparar_con_kids(image_path, known_faces_dir='kids_faces'):
 
         rostro_capturado = codigos_captura[0]
 
-        for archivo in os.listdir(known_faces_dir):
-            ruta = os.path.join(known_faces_dir, archivo)
-            imagen_bd = face_recognition.load_image_file(ruta)
-            codigos_bd = face_recognition.face_encodings(imagen_bd)
+        # Conectarse a la base de datos
+        session = SessionLocal()
+        kids = session.query(Kid).all()
 
-            if not codigos_bd:
+        for kid in kids:
+            if not kid.face_encoding:
                 continue
 
-            if face_recognition.compare_faces([codigos_bd[0]], rostro_capturado)[0]:
-                nombre = os.path.splitext(archivo)[0]
-                return f"Rostro identificado: {nombre}"
+            encoding_kid = pickle.loads(kid.face_encoding)
 
-        return "Rostro no reconocido en la base de datos."
+            if face_recognition.compare_faces([encoding_kid], rostro_capturado)[0]:
+                session.close()
+                return f"✅ Rostro identificado: {kid.name}"
+
+        session.close()
+        return "❌ Rostro no reconocido en la base de datos."
+
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"⚠️Error: {str(e)}"
 

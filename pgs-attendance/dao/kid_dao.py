@@ -49,6 +49,12 @@ def reconocer_kid():
     session.close()
     return None
 
+def guardar_kid(nombre, path_imagen):
+    with open(path_imagen, 'rb') as f:
+        imagen_binaria = f.read()
+    nuevo_kid = Kid(nombre=nombre, rostro=imagen_binaria)
+    session.add(nuevo_kid)
+    session.commit()
 
 
 """

@@ -2,7 +2,15 @@ import face_recognition
 import numpy as np
 from models.kid import Kid
 from config.database import Session
+from config.database import SessionLocal
 from utils.face_utils import capturar_rostro
+
+def obtener_face_encoding(ruta_imagen):
+    imagen = face_recognition.load_image_file(ruta_imagen)
+    encoding = face_recognition.face_encodings(imagen)
+    if encoding:
+        return encoding[0].tobytes()
+    return None
 
 def registrar_kid(self):
     nombre = self.input_nombre.text()
@@ -15,39 +23,31 @@ def registrar_kid(self):
         QMessageBox.warning(self, "Campos incompletos", "Por favor, llena todos los campos y selecciona una imagen.")
         return
 
+    encoding = obtener_face_encoding(self.ruta_imagen)
+    if encoding is None:
+        QMessageBox.warning(self, "Error con imagen", "No se detectó un rostro en la imagen.")
+        return
+
+    nuevo_kid = Kid(
+        nombre=nombre,
+        apellidos=apellidos,
+        tutor=tutor,
+        maestro=maestro,
+        grado=grado,
+        face_encoding=encoding
+    )
+
     try:
-        # 1. Cargar imagen y obtener encoding facial
-        imagen = face_recognition.load_image_file(self.ruta_imagen)
-        encodings = face_recognition.face_encodings(imagen)
-        if not encodings:
-            QMessageBox.critical(self, "Error", "No se detectó ningún rostro en la imagen.")
-            return
-
-        face_encoding = encodings[0]
-        face_encoding_bytes = np.array(face_encoding).tobytes()
-
-        # 2. Crear instancia de Kid
-        nuevo_kid = Kid(
-            nombre=nombre,
-            apellidos=apellidos,
-            tutor=tutor,
-            maestro=maestro,
-            grado=grado,
-            face_encoding=face_encoding_bytes
-        )
-
-        # 3. Guardar en la base de datos
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         session.add(nuevo_kid)
         session.commit()
         session.close()
-
         QMessageBox.information(self, "Éxito", "Niño registrado correctamente.")
-        self.close()
-
     except Exception as e:
-        QMessageBox.critical(self, "Error", f"Ocurrió un error:\n{str(e)}")
+        QMessageBox.critical(self, "Error", f"Ocurrió un error al registrar: {e}")
+
+
+
 def reconocer_kid():
     session = Session()
     todos = session.query(Kid).all()
@@ -87,6 +87,15 @@ def guardar_kid(nombre, path_imagen):
     nuevo_kid = Kid(nombre=nombre, rostro=imagen_binaria)
     session.add(nuevo_kid)
     session.commit()
+
+def limpiar_campos(self):
+    self.input_nombre.clear()
+    self.input_apellidos.clear()
+    self.input_tutor.clear()
+    self.input_maestro.clear()
+    self.input_grado.clear()
+    self.label_imagen.clear()
+    self.ruta_imagen = None
 
 
 """

@@ -1,3 +1,11 @@
+from models.kid import Kid
+from config.database import SessionLocal
+import face_recognition
+import pickle
+from PyQt5.QtWidgets import QMessageBox
+from controllers.kid_controller import registrar_kid_con_datos
+
+
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QLineEdit, QPushButton,
     QFileDialog, QHBoxLayout, QMessageBox
@@ -23,23 +31,23 @@ class RegistroKidView(QWidget):
 
         # Campos de texto
         self.input_nombre = QLineEdit()
-        self.input_nombre.setPlaceholderText("Nombre (ej. Andre@)")
+        self.input_nombre.setPlaceholderText("Nombre(s)")
         layout.addWidget(self.input_nombre)
 
         self.input_apellidos = QLineEdit()
-        self.input_apellidos.setPlaceholderText("Apellidos (ej. GP)")
+        self.input_apellidos.setPlaceholderText("Apellidos")
         layout.addWidget(self.input_apellidos)
 
         self.input_tutor = QLineEdit()
-        self.input_tutor.setPlaceholderText("Padre o Tutor (ej. Araceli GO)")
+        self.input_tutor.setPlaceholderText("Padre o Tutor")
         layout.addWidget(self.input_tutor)
 
         self.input_maestro = QLineEdit()
-        self.input_maestro.setPlaceholderText("Maestro (ej. Vero)")
+        self.input_maestro.setPlaceholderText("Maestro")
         layout.addWidget(self.input_maestro)
 
         self.input_grado = QLineEdit()
-        self.input_grado.setPlaceholderText("Grado y grupo (ej. 33B)")
+        self.input_grado.setPlaceholderText("Grado y grupo")
         layout.addWidget(self.input_grado)
 
         # Botón para registrar
@@ -68,7 +76,18 @@ class RegistroKidView(QWidget):
         maestro = self.input_maestro.text()
         grado = self.input_grado.text()
 
-        if not all([self.ruta_imagen, nombre, apellidos, tutor, maestro, grado]):
-            QMessageBox.warning(self, "Campos incompletos", "Por favor, llena todos los campos y selecciona una imagen.")
-            return
+        exito, mensaje = registrar_kid_con_datos(
+            nombre, apellidos, tutor, maestro, grado, self.ruta_imagen
+        )
 
+        if exito:
+            QMessageBox.information(self, "Éxito", mensaje)
+            self.input_nombre.clear()
+            self.input_apellidos.clear()
+            self.input_tutor.clear()
+            self.input_maestro.clear()
+            self.input_grado.clear()
+            self.label_imagen.clear()
+            self.ruta_imagen = None
+        else:
+            QMessageBox.warning(self, "Error", mensaje)

@@ -6,6 +6,9 @@ class Kid(Base):
     __table_args__ = {"schema": "public"} 
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    nombre = Column(String)
+    apellidos = Column(String)
+    tutor = Column(String)
+    maestro = Column(String)
+    grado = Column(String)
     face_encoding = Column(LargeBinary)
-

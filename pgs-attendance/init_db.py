@@ -24,14 +24,23 @@ def obtener_face_encoding(ruta_imagen):
 session = SessionLocal()
 
 kid1 = Kid(
-    name="Jovany Lobato Merenguez",
-    face_encoding=obtener_face_encoding("kids_faces/yo2.jpg")
+    nombre="Jovany",
+    apellidos="Lobato Merenguez",
+    tutor="Fernando",
+    maestro="Maestra Ejemplo",
+    grado="3A",
+    face_encoding=obtener_face_encoding("kids_faces/Jovany Lobato Merenguez.jpg")
 )
 
 kid2 = Kid(
-    name="Aurora Aksnes",
-    face_encoding=obtener_face_encoding("kids_faces/aurorabd.jpeg")
+    nombre="Aurora",
+    apellidos="Aksnes",
+    tutor="Padre X",
+    maestro="Maestra Y",
+    grado="3B",
+    face_encoding=obtener_face_encoding("kids_faces/Aurora Aksnes.jpeg")
 )
+
 
 teacher = Teacher(name="Guadalupe Elizabeth Camarena Castro")
 parent = Parent(name="Fernando Fernández Hernández")

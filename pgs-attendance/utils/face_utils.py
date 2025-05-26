@@ -28,7 +28,7 @@ def comparar_con_db(yo1_path):
     yo1_encodings = face_recognition.face_encodings(yo1_image)
 
     if not yo1_encodings:
-        print("❌ No se detectó ningún rostro en la imagen proporcionada.")
+        print(" No se detectó ningún rostro en la imagen proporcionada.")
         return
 
     yo1_encoding = yo1_encodings[0]
@@ -43,7 +43,7 @@ def comparar_con_db(yo1_path):
         resultado = face_recognition.compare_faces([encoding_kid], yo1_encoding)[0]
         distancia = np.linalg.norm(encoding_kid - yo1_encoding)
 
-        print(f"🔍 Comparando con: {kid.name} → {'✅ Coincidencia' if resultado else '❌ No coincide'} (Distancia: {distancia:.2f})")
+        print(f" Comparando con: {kid.name} → {' Coincidencia' if resultado else ' No coincide'} (Distancia: {distancia:.2f})")
 
     session.close()
 

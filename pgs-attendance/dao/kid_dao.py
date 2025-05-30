@@ -1,7 +1,7 @@
 import face_recognition
 import numpy as np
+import pickle
 from models.kid import Kid
-from config.database import Session
 from config.database import SessionLocal
 from utils.face_utils import capturar_rostro
 
@@ -97,6 +97,37 @@ def limpiar_campos(self):
     self.label_imagen.clear()
     self.ruta_imagen = None
 
+def registrar_kid_en_bd(nombre, apellidos, tutor, maestro, grado, ruta_imagen):
+    if not all([nombre, apellidos, tutor, maestro, grado, ruta_imagen]):
+        return False, "Campos incompletos"
+
+    try:
+        imagen = face_recognition.load_image_file(ruta_imagen)
+        encodings = face_recognition.face_encodings(imagen)
+
+        if not encodings:
+            return False, "No se detectó un rostro en la imagen"
+
+        face_encoding = pickle.dumps(encodings[0])
+
+        session = SessionLocal()
+        nuevo_kid = Kid(
+            nombre=nombre.strip(),
+            apellidos=apellidos.strip(),
+            tutor=tutor.strip(),
+            maestro=maestro.strip(),
+            grado=grado.strip().upper(),
+            face_encoding=face_encoding
+        )
+        session.add(nuevo_kid)
+        session.commit()
+        session.close()
+
+        return True, "Niño registrado correctamente"
+
+
+    except Exception as e:
+        return False, f"Error al registrar niño: {e}"
 
 """
 from config.database import SessionLocal

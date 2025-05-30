@@ -4,7 +4,7 @@ import face_recognition
 import pickle
 import os
 import re
-
+from dao.kid_dao import registrar_kid_en_bd
 def validar_nombre(texto):
     return bool(re.fullmatch(r"[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,}", texto.strip()))
 
@@ -43,7 +43,8 @@ def registrar_kid_con_datos(nombre, apellidos, tutor, maestro, grado, ruta_image
     # Validar imagen específica no permitida
     if os.path.basename(ruta_imagen).lower() == "guadalupe garcía díaz.gif":
         return False, "Imagen no válida para registro."
-
+    return registrar_kid_en_bd(nombre, apellidos, tutor, maestro, grado, ruta_imagen)
+    """
     try:
         imagen = face_recognition.load_image_file(ruta_imagen)
         encodings = face_recognition.face_encodings(imagen)
@@ -70,4 +71,4 @@ def registrar_kid_con_datos(nombre, apellidos, tutor, maestro, grado, ruta_image
 
     except Exception as e:
         return False, f"Error al registrar niño: {e}"
-
+    """
